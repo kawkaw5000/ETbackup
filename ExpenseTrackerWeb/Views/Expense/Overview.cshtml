@@ -1,0 +1,286 @@
+﻿@using System.Security.Claims
+@model ExpenseTracker.Data.Models.CustomModels.OverviewViewModel
+@{
+    var currentUserIdString = User.FindFirst(ClaimsIdentity.DefaultNameClaimType)?.Value;
+    var currentUserIdInt = Convert.ToInt32(currentUserIdString);
+}
+
+@{
+    ViewData["Title"] = "Overview";
+    Layout = "_MainLayout";
+}
+<link href="~/mainstyle/expense-details.css" rel="stylesheet" />
+<link href="~/mainstyle/add-expense.css" rel="stylesheet" />
+<link href="~/mainstyle/edit-expense.css" rel="stylesheet" />
+<link href="~/mainstyle/addbudget.css" rel="stylesheet" />
+        <div class="main-container">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="main-title">
+                    <h2>Hey there, @User.FindFirst(ClaimTypes.NameIdentifier)?.Value!</h2>
+                    <p>Your budgets</p>
+                </div>
+            }
+
+            @await Html.PartialAsync("_UserBudgetPartialView", 
+           Model.UserBalance.FirstOrDefault(u => u.UserId == currentUserIdInt))
+
+
+            <div class="bottom-title">
+                Recent Expenses
+            </div>
+            <div id="table-content" class="hide">
+                <table class="table-expense">
+                    <thead>
+                        <tr>
+                            <th>
+                                <form action="@Url.Action("Overview", "Expense")" method="get" style="display: inline;">
+                                    <input type="hidden" name="sortOrderCategory" value="@((ViewBag.CurrentSortOrderCategory == "asc") ? "reset" : "asc")" />
+                                    <input type="hidden" name="sortOrderDate" value="reset" />
+                                    <button type="submit" style="background: none; border: none; padding: 0;">
+                                        <img src="~/images/iconVec/@(ViewBag.CurrentSortOrderCategory == "asc" ? "up-arrow.svg" : "down-arrw.svg")" alt="Sort by Category">
+                                        <span style="font-size: 1rem; font-family: Arial, Helvetica, sans-serif;">Category</span>
+                                    </button>
+                                </form>
+                            </th>
+
+                            <th>Expense Name</th>
+                            <th>Amount</th>
+                            <th>
+                                <form action="@Url.Action("Overview", "Expense")" method="get" style="display: inline;">
+                                    <input type="hidden" name="sortOrderDate" value="@((ViewBag.CurrentSortOrderDate == "asc") ? "reset" : "asc")" />
+                                    <input type="hidden" name="sortOrderCategory" value="reset" />
+                                    <button type="submit" style="background: none; border: none; padding: 0;">
+                                        <img src="~/images/iconVec/@(ViewBag.CurrentSortOrderDate == "asc" ? "up-arrow.svg" : "down-arrw.svg")" alt="Sort by Date">
+                                        <span style="font-size: 1rem; font-family: Arial, Helvetica, sans-serif;">Date</span>
+                                    </button>
+                                </form>
+                            </th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.UserExpense != null && Model.UserExpense.Any())
+                        {
+                            foreach (var item in Model.UserExpense)
+                            {
+                                <tr>
+                                    <td data-user-id="@item.UserId"    
+                                        data-expense-id="@item.ExpenseId"
+                                        data-category-name="@item.Category?.CategoryName"
+                                        data-expense-name="@item.ExpenseName"
+                                        data-amount="@item.Amount"                    
+                                        data-date="@(item.Date?.ToString("yyyy-MM-dd") ?? string.Empty)"
+                                        data-description="@item.Description"
+                                        data-start-date="@item.StartDate"
+                                        data-end-date="@item.EndDate"
+                                    >
+                                        <div style="display: flex;
+                                    align-items: center;
+                                    justify-content: start; padding-left: 0px;
+                                            ">
+                                            <div class="img-bg">
+                                                <img src="~/images/iconVec/tags.svg" alt="">
+                                            </div>
+                                            <p style="margin-left: 10px;">@item.Category?.CategoryName</p>
+                                        </div>
+                                    </td>
+                                    <td>@item.ExpenseName</td>
+                                    <td>₱@item.Amount</td>
+                                    <td>@(item.Date == null ? item.StartDate : item.Date)</td>
+                                    <td><a id="item-details" class="item-details">Details</a></td>
+                                </tr>
+                            }
+                        } else
+                        {
+                            <tr>
+                                <td colspan="5">No recent expenses.</td>                                        
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="button-search">
+                    <form method="get" action="@Url.Action("Overview", "Expense")">
+                        <div style="position: relative;">
+                            <input type="text" name="Search" placeholder="Search">
+                            <div style="position: absolute;
+                            top: 10px; right: 0;">
+                                <button id="searchBtn" type="submit">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                    <a id="add-id">Add Expenses</a>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <div id="view-recent" class="recent-hide">
+                    <a href="#">View Recent</a>
+                </div>
+                <div id="add-expense" class="recent-hide">
+                    <a id="m-add-id" href="#">Add Expenses</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="expense-container" class="hide">
+            <div id="expense-details">
+                <div style="display: flex; align-items: center; justify-content: center;
+                            margin-top: 10px;
+                            margin-bottom: 10px;">
+                    <div>
+                        <p class="details-expense">Expense Details</p>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: row; align-items: center;
+                            justify-content: start;
+                            margin-top: 25px;">
+                    <div style="display: flex; flex-direction: column;
+                                margin-left: 20px;
+                                gap: 15px;
+                                margin-top: 5px;">
+                        <div>
+                            <img src="~/images/iconVec/ingredient-icon.svg" alt="">
+                        </div>
+                        <div>
+                            <img src="~/images/iconVec/money-icon.svg" alt="">
+                        </div>
+                        <div>
+                            <img src="~/images/iconVec/CategoryThumbail.svg" alt="">
+                        </div>
+                        <div>
+                            <img src="~/images/iconVec/bag-icon.svg" alt="">
+                        </div>
+                        <div>
+                            <img src="/images/iconVec/paper-icon.svg" alt="">
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; margin-left: 20px;
+                                gap: 15px;">
+                        <input type="hidden" id="modal-expense-id" value=""/>
+                        <p id="modal-expense-name"></p>
+                        <p id="modal-amount"></p>
+                        <p id="modal-category-name"></p>
+                        <p id="modal-date"></p>
+                        <p id="modal-description"></p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: center;
+                            margin-top: 10px;
+                            margin-bottom: 10px;">
+                    <button id="edit">Edit</button>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: center;
+                            margin-top: 10px;
+                            margin-bottom: 10px;">
+                    <button id="del">Delete</button>
+                </div>
+            </div>
+            <div class="blur-bg">
+            </div>
+        </div>
+
+        <div id="set-amountCont" class="hide">
+            <div class="setAmount">
+                <p>Add Budget</p>
+                <div style="position: relative;">
+                    <input id="balance-amount" type="number" placeholder="Amount" style="width: 275px; padding: 10px 10px 10px 25px; border-radius: 20px; border: 1px solid black;" />
+                    <div style="position: absolute; left: 8px; top: 17px;"><img style="width:16px; " src="~/images/iconVec/money-icon.svg" alt=""></div>
+                </div>   
+                <div style="display:flex; flex-direction: row; align-items: center; justify-content: center; flex-wrap: wrap; gap: 15px;">
+                    <select id="month-id" style="width: 130px;background-color: #272B2C; padding: 10px; border-radius: 20px; border: 1px solid black; color: white;" required>
+                    <option value="" disabled selected hidden>Select Month</option>
+                        @foreach (var month in ViewBag.Month)
+                        {
+                            <option value="@month.Value">@month.Text</option>
+                        }
+                    </select>
+                    <select id="year-id" style="width: 130px;background-color: #272B2C; padding: 10px; border-radius: 20px; border: 1px solid black; color: white;" required>
+                        <option value="" disabled selected hidden>Select Year</option>
+                        @foreach (var year in ViewBag.Year)
+                        {
+                            <option value="@year.Value">@year.Text</option>
+                        }
+                    </select>
+                </div>               
+                <button id="save-budget" type="button">Save Budget</button>
+            </div>
+            <div id="bgbudget-blur" class="budget-blur-bg"></div>
+        </div>
+
+        @await Html.PartialAsync("_EditExpensePartialView", Model.UserExpense.FirstOrDefault())
+        
+        @await Html.PartialAsync("_AddExpensePartialView", new Expense())
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/overview.js"></script>
+<script>
+    document.getElementById('save-budget').addEventListener('click', function(event) {
+        event.stopPropagation();
+
+        const saveButton = document.getElementById('save-budget');
+        saveButton.disabled = true;
+
+        const balanceAmount = document.getElementById('balance-amount').value.trim();
+        const balanceMonth = document.getElementById('month-id').value;
+        const yearMonth = document.getElementById('year-id').value;
+
+        if (!balanceAmount || !balanceMonth || !yearMonth){
+            alert('Please fill in all required fields.');
+        }
+
+        if (balanceAmount <= 0) {
+            alert('Please enter a valid amount.');
+        }
+      
+        const balanceData = {
+            TotalBalance: balanceAmount,
+            MonthId: balanceMonth,
+            YearId: yearMonth
+        };
+
+        fetch('/Expense/AddBalance', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(balanceData)
+        })
+        .then(response => { 
+            if (response.ok) {
+                alert('Budget Successfully added!');
+                document.getElementById('set-amountCont').classList.remove('show');
+                document.getElementById('set-amountCont').classList.add('hide');
+            } else {
+                alert('Failed to save expense. Please try again.');
+            }
+
+            saveButton.disabled = false;
+        })
+        .catch(error => {
+            console.error('Error:', error);           
+            saveButton.disabled = false;
+        });
+    });
+
+    document.getElementById('budget-btn').addEventListener('click', function(event){
+        event.stopPropagation();
+
+        let addBalance = document.getElementById('set-amountCont');
+        
+        if(addBalance.classList.contains('hide')) {
+            addBalance.classList.remove('hide');
+            addBalance.classList.add('show');
+        }
+    });
+
+    document.getElementById('bgbudget-blur').addEventListener('click', function (event) {
+        event.stopPropagation();
+
+        let addBalance = document.getElementById('set-amountCont');
+        if(addBalance.classList.contains('show')) {
+            addBalance.classList.remove('show');
+            addBalance.classList.add('hide');
+        }
+    });
+</script>

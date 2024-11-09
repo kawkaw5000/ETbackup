@@ -1,0 +1,34 @@
+﻿@model ExpenseTracker.Data.Models.Balance
+@using System.Security.Claims
+<div class="balance-container" style="position: relative;">
+    <div class="balance-monthYear">
+        <select>         
+            @foreach (var balance in ViewBag.BalanceDate)
+            {
+                <option value="@balance.Value">@balance.Text</option>
+            }
+        </select>
+    </div>
+    <div class="expense">
+        <p id="expense-category">Total Balance</p>
+        <p id="expense-tag">PHP<input type="text" class="digital-input" placeholder="------------"
+                   value="@String.Format("{0:N2}", Model.TotalBalance)" readonly>
+        </p>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <p id="expense-user">@User.FindFirst(ClaimTypes.NameIdentifier)?.Value</p>
+        }
+        <div id="deduction"><button id="budget-btn" class="budgetBtn">Set Budget</button></div>
+    </div>
+    <div class="remaining-expense">
+        <p id="remaining-expense-category">Remaining Balance</p>
+        <p id="remaining-expense-tag">PHP<input type="text" class="digital-input" placeholder="------------" value="@String.Format("{0:N2}", Model.RemainingBalance)" readonly></p>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <p id="remaining-expense-user">@User.FindFirst(ClaimTypes.NameIdentifier)?.Value</p>
+        }
+    </div>
+</div>
+
+
+

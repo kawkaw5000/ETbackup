@@ -1,0 +1,100 @@
+﻿@model ExpenseTracker.Data.Models.Expense
+<div id="add-expense-container" class="hide">
+        <div id="expense-add" class="hide">
+            <p style="margin-top: 20px;">Add Expense</p>
+            <div style="position: relative;">
+                <input id="expense-name" type="text" placeholder="Expense Name" style="width: 275px; padding: 10px 10px 10px 25px; border-radius: 20px; border: 1px solid black;" required />
+                <div style="position: absolute; left: 8px; top: 10px;"><img src="~/images/iconVec/ingredient-icon.svg" alt=""></div>
+            </div>
+            <div style="position: relative;">
+                <input id="amount" type="number" placeholder="Amount" style="width: 275px; padding: 10px 10px 10px 25px; border-radius: 20px; border: 1px solid black;" />
+                <div style="position: absolute; left: 8px; top: 8px;"><img style="width:16px; " src="~/images/iconVec/money-icon.svg" alt=""></div>
+            </div>
+            <select id="category-id" style="background-color: #272B2C; padding: 10px; border-radius: 20px; border: 1px solid black; color: white;" required>
+                <option value="" disabled selected hidden>Select Category</option>
+                @foreach (var category in ViewBag.Category)
+                {
+                    <option value="@category.Value">@category.Text</option>
+                }
+            </select>
+            <div style="display: flex; flex-direction:row;align-content:start;justify-content:start; flex-wrap:wrap; gap: 8px;">
+                <div class="toggle-container">
+                    <label class="switch">
+                        <input type="checkbox" id="toggleCheckbox"> 
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="dayTitle" style="position: absolute; left: 100px;"> 
+                    <p style="color: black;">Set Day</p>
+                </div>
+                <div class="checkbox-container" style="opacity: 0; pointer-events: none;">
+                    <input type="checkbox" class="day-checkbox" id="sunday" name="SelectedDays" value="Sunday" />
+                    <label for="sunday" class="day-label">Su</label>
+
+                    <input type="checkbox" class="day-checkbox" id="monday" name="SelectedDays" value="Monday" />
+                    <label for="monday" class="day-label">M</label>
+
+                    <input type="checkbox" class="day-checkbox" id="tuesday" name="SelectedDays" value="Tuesday" />
+                    <label for="tuesday" class="day-label">T</label>
+
+                    <input type="checkbox" class="day-checkbox" id="wednesday" name="SelectedDays" value="Wednesday" />
+                    <label for="wednesday" class="day-label">W</label>
+
+                    <input type="checkbox" class="day-checkbox" id="thursday" name="SelectedDays" value="Thursday" />
+                    <label for="thursday" class="day-label">Th</label>
+
+                    <input type="checkbox" class="day-checkbox" id="friday" name="SelectedDays" value="Friday" />
+                    <label for="friday" class="day-label">F</label>
+
+                    <input type="checkbox" class="day-checkbox" id="saturday" name="SelectedDays" value="Saturday" />
+                    <label for="saturday" class="day-label">Sa</label>
+                </div>
+            </div>
+
+            <div class="date-now">
+                <input id="date-only" type="date" class="date-input" required />
+                <span class="date-placeholder">Date</span>
+            </div>
+
+            <div class="date-start-end" style="display: flex; opacity: 0; pointer-events: none; position: absolute; right: 91px; top: 246px; gap: 10px; flex-direction:row;align-content:center;justify-content:start;gap: 15px;">
+                <div class="date-wrapper">
+                    <input id="start-date" type="date" class="date-input" required />
+                    <span class="date-placeholder">Start Date</span>
+                </div>
+                <div class="date-wrapper">
+                    <input id="end-date" type="date" class="date-input" required />
+                    <span class="date-placeholder">End Date</span>
+                </div>
+            </div>
+                  
+            <div style="position: relative;">
+                <textarea id="description" type="text" style="height: 120px; padding:10px; border-radius: 20px; width: 275px; resize: none;" required></textarea>
+                <div style="position: absolute; right: 8px; bottom: 10px;"><img src="/images/iconVec/paper-icon.svg" alt=""></div>
+            </div>
+            <button id="save-btn" style="cursor: pointer; width: 275px; padding: 10px 10px 10px 25px; border-radius: 20px; border: 1px solid black; background-color: #272B2C; color: white;" type="button">
+                Save Expense
+            </button>
+        </div>         
+        <div id="add-blur" class="add-blur-bg"></div>
+    </div>
+
+    <div id="confirmation-modal" class="hide">
+        <div id="confirm" class="hide">
+            <img src="/images/iconVec/warning-save.svg" />
+            <p>Save Expense?</p>
+            <button id="ok-btn" type="submit" class="ok-btn">OK</button>
+            <button id="cancel-btn" type="button" class="cancel-btn">Cancel</button>
+        </div>
+        <div id="confirm-add-blur" class="add-blur-bg"></div>
+    </div>
+
+    <div id="success-added-modal" class="hide">
+        <div id="success">
+            <img src="/images/iconVec/succes-save.svg"/>
+            <p style="text-align: center; padding: 20px;">Expense successfully added!</p>
+            <button id="done-b">Done</button>
+        </div>
+        <div id="success-add-blur" class="add-blur-bg"></div>
+    </div>
+
+<script src="~/js/addexpense.js"></script>

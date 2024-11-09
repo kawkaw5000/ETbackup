@@ -1,0 +1,191 @@
+﻿@using System.Security.Claims
+@model IEnumerable<ExpenseTracker.Data.Models.Category>
+
+@{
+    ViewData["Title"] = "Category";
+    Layout = "_MainLayout";
+}
+
+<link href="~/mainstyle/add-category.css" rel="stylesheet" />
+<link href="~/mainstyle/add-expense.css" rel="stylesheet" />
+<link href="~/mainstyle/category-details.css" rel="stylesheet" />
+<link href="~/mainstyle/expense-details.css" rel="stylesheet" />
+<div class="main-container">
+    <div class="main-title">
+        <h1>Category</h1>
+    </div>
+    <br />
+    <div id="table-category-content" class="hide">
+        <table class="table-category">
+            <thead>
+                <tr>
+                    <th>
+                        <form action="@Url.Action("Category", "Expense")" method="get" style="display: inline;">
+                            <input type="hidden" name="sortOrderCategory" value="@((ViewBag.CurrentSortOrderCategory == "asc") ? "reset" : "asc")" />
+                            <input type="hidden" name="sortOrderDate" value="reset" />
+                            <button type="submit" style="background: none; border: none; padding: 0;">
+                                <img src="~/images/iconVec/@(ViewBag.CurrentSortOrderCategory == "asc" ? "up-arrow.svg" : "down-arrw.svg")" alt="Sort by Category">
+                            </button>
+                        </form>
+                        Category
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Description)
+                    </th>
+                    <th>
+                        @*@Html.DisplayNameFor(model => model.SetAmount)*@
+                        Expenses
+                    </th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td data-label="Category">
+                            <div class="cat-div">
+                                <div class="img-bg">
+                                    <img src="~/images/iconVec/tags.svg" alt="">
+                                </div>
+                                <p style="margin-left:10px;">@item.CategoryName</p>
+                            </div>
+                        </td>
+                        <td data-label="Description">
+                            <div class="cat-div">
+                                <p>
+                                    @item.Description
+                                </p>
+                            </div>
+                        </td>
+                        <td data-label="Expenses">
+                            <div class="cat-div">
+                                @if (@item.SetAmount != null)
+                                {
+                                    <p>
+                                        ₱@item.SetAmount
+                                    </p>
+                                }
+                            </div>
+                        </td>
+                        <td data-label="Action">
+                            <div class="cat-div">
+                                <a class="catDetails">Details</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="button-search">
+            <form method="get" action="@Url.Action("Category", "Expense")">
+                <div style="position: relative;">
+                    <input type="text" name="Search" placeholder="Search">
+                    <div style="position: absolute;
+                            top: 10px; right: 0;">
+                        <button id="searchBtn" type="submit">Search</button>
+                    </div>
+                </div>
+            </form>
+            <a id="category-add-id">Add Category</a>
+        </div>
+    </div>
+</div>
+
+<!-- ADD CATEGORY MODAL -->
+
+<div id="add-category-cont" class="hide">
+    <div class="add-category">
+        <div class="category-title">
+            <p>Add New Category</p>
+        </div>
+        <div class="categroy-color">
+            <img src="/images/iconVec/image 9.svg"/>
+        </div>
+        <div class="category-name">     
+            <input id="cat-name" type="text" placeholder="Expense Name" style="width: 275px; padding: 10px 10px 10px 25px; border-radius: 20px; border: 1px solid black;" required />
+            <div style="position: absolute; left: 8px; top: 10px;"><img src="~/images/iconVec/ingredient-icon.svg" alt=""></div>     
+        </div>
+        <div class="category-description">
+            <textarea id="cat-description" type="text" style="height: 120px; padding:10px; border-radius: 20px; width: 275px; resize: none;" required></textarea>
+            <div style="position: absolute; right: 8px; bottom: 10px;"><img src="/images/iconVec/paper-icon.svg" alt=""></div>
+        </div>
+        <div class="category-button">
+            <button id="save-btn" style="cursor: pointer; width: 275px; padding: 10px 10px 10px 25px; border-radius: 20px; border: 1px solid black; background-color: #272B2C; color: white;" type="button">
+                Save Expense
+            </button>
+        </div>
+    </div>
+</div>
+<!-- ADD CATEGORY SUCCESS MODAL -->
+<div id="cat-confirmation-modal" class="hide">
+    <div id="cat-confirm" class="hide">
+        <img src="/images/iconVec/warning-save.svg" />
+        <p>Save Category?</p>
+        <button id="cat-ok-btn" type="submit" class="cat-ok-btn">OK</button>
+        <button id="cat-cancel-btn" type="button" class="cat-cancel-btn">Cancel</button>
+    </div>
+    <div id="cat-confirm-add-blur" class="cat-add-blur-bg"></div>
+</div>
+
+<!-- ADD CATEGORY SUCCESS MODAL -->
+<div id="cat-success-added-modal" class="hide">
+    <div id="cat-success">
+        <img src="/images/iconVec/succes-save.svg" />
+        <p style="text-align: center; padding: 20px;">Category successfully added!</p>
+        <button id="cat-done-b">Done</button>
+    </div>
+    <div id="cat-success-add-blur" class="cat-add-blur-bg"></div>
+</div>
+
+<!-- DETAILS CATEGORY MODAL -->
+<div id="category-container" class="hide">
+    <div id="category-details">
+        <div style="display: flex; align-items: center; justify-content: center;
+                            margin-top: 10px;
+                            margin-bottom: 10px;">
+            <div>
+                <p class="details-category">Expense Details</p>
+            </div>
+        </div>
+        <div style="display: flex; flex-direction: row; align-items: center;
+                            justify-content: start;
+                            margin-top: 25px;">
+            <div style="display: flex; flex-direction: column;
+                                margin-left: 20px;
+                                gap: 15px;
+                                margin-top: 5px;">
+                <div>
+                    <img src="~/images/iconVec/ingredient-icon.svg" alt="">
+                </div>
+                <div>
+                    <img src="~/images/iconVec/money-icon.svg" alt="">
+                </div>   
+                <div>
+                    <img src="/images/iconVec/paper-icon.svg" alt="">
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: column; margin-left: 20px;
+                                gap: 15px;">
+                <input type="hidden" id="modal-expense-id" value="" />
+                <p id="modal-expense-name"></p>
+                <p id="modal-amount"></p>            
+                <p id="modal-description"></p>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center;
+                            margin-top: 10px;
+                            margin-bottom: 10px;">
+            <button id="categoryedit">Edit</button>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center;
+                            margin-top: 10px;
+                            margin-bottom: 10px;">
+            <button id="categorydel">Delete</button>
+        </div>
+    </div>
+</div>
+
+<div id="category-add-blur" class="hide"></div>
+
+<script src="~/js/category.js"></script>

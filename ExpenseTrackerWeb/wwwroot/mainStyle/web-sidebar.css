@@ -1,0 +1,25 @@
+.web-sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 180px;
+}
+
+.web-sidebar 
+#overview,
+#categories,
+#analytics,
+#settings,
+#log-out {
+    text-decoration: none;
+    color: black;
+}
+
+.web-sidebar  
+#overview:hover,
+#categories:hover,
+#analytics:hover,
+#settings:hover,
+#log-out:hover {
+  color: rgb(77, 192, 77);
+}

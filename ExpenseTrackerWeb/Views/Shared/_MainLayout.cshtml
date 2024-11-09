@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Expense Tracker</title>
+    <link rel="stylesheet" href="~/mainStyle/general.css">
+    <link rel="stylesheet" href="~/mainStyle/header.css">
+    <link rel="stylesheet" href="~/mainStyle/sidebar.css">
+    <link rel="stylesheet" href="~/mainStyle/main.css">
+    <link rel="stylesheet" href="~/mainStyle/web-sidebar.css">
+    <link rel="stylesheet" href="~/mainStyle/category-table.css">
+</head>
+
+<body>
+    <header class="header" id="hide">
+        <div id="burger">
+            <img src="/images/sidebarImg/charm_menu-hamburger.svg" alt="" class="burger">
+        </div>
+        <div id="logo">
+            <img src="/images/logo/Logo.svg" alt="">
+        </div>
+        <div id="logo-name">
+            <p>ExpenseTracker</p>
+        </div>
+    </header>
+
+    <nav class="web-sidebar" id="hide">
+        <div style="display: flex;
+                flex-direction: column;
+                align-items: start;
+                justify-content: start;
+                padding-top: 75px;
+                padding-left: 30px;">
+            <div style="display: flex; align-items: center; justify-content: start; margin: 10px;
+    flex-direction: column;
+    margin-bottom: 30px;">
+                <img src="/images/logo/Logo.svg" alt="">
+                <p>ExpenseTracker</p>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: start; margin: 10px;">
+                <img src="/images/backgroundImage/Overview.svg" alt="" style="margin-right: 10px;">
+                <a href="/Expense/Overview" id="overview">Overview</a>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: start; margin: 10px;">
+                <img src="/images/backgroundImage/Categories.svg" alt="" style="margin-right: 10px;">
+                <a href="/Expense/Category" id="categories">Categories</a>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: start; margin: 10px">
+                <img src="/images/backgroundImage/Analytics.svg" alt="" style="margin-right: 10px;">
+                <a href="/Expense/ExpenseSummary" id="analytics">Analytics</a>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: start; margin: 10px;">
+                <img src="/images/backgroundImage/Settings.svg" alt="" style="margin-right: 10px;">
+                <a href="/Account/Update" id="settings">Settings</a>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: start; margin: 10px;">
+                <img src="/images/backgroundImage/logout-icon.svg" alt="" style="margin-right: 10px;">
+                <a href="/Account/Logout" id="log-out">Log out</a>
+            </div>
+        </div>
+    </nav>
+    <nav id="sidebar" class="hidden">
+        <div class="flex-column">
+            <div style="display: flex; align-items: center; justify-content: start; margin: 10px;">
+                <img src="/images/backgroundImage/Overview.svg" alt="" style="margin-right: 10px;">
+                <a href="/Expense/Overview" id="overview" style="text-decoration:none; color: black;">Overview</a>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: start; margin: 10px;">
+                <img src="/images/backgroundImage/Categories.svg" alt="" style="margin-right: 10px;">
+                <a href="/Expense/Category" id="categories">Categories</a>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: start; margin: 10px;">
+                <img src="/images/backgroundImage/Analytics.svg" alt="" style="margin-right: 10px;">
+                <a href="/Expense/ExpenseSummary" id="analytics">Analytics</a>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: start; margin: 10px;">
+                <img src="/images/backgroundImage/Settings.svg" alt="" style="margin-right: 10px;">
+                <a href="/Account/Update" id="settings">Settings</a>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: start; margin: 10px;">
+                <img src="/images/backgroundImage/logout-icon.svg" alt="" style="margin-right: 10px;">
+                <a href="/Account/Logout" id="log-out">Log out</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main">
+        @RenderBody()
+    </main>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/main-sidebar.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        // JavaScript to auto-hide the navbar on scroll
+        let lastScrollTop = 0; // Keep track of the last scroll position
+        const header = document.querySelector('.header');
+
+        window.addEventListener('scroll', function() {
+            const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+            if (currentScroll > lastScrollTop) {
+                // Scrolling down
+                header.style.top = "-75px"; // Adjust based on your header's height
+            } else {
+                // Scrolling up
+                header.style.top = "0";
+            }
+
+            lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // For Mobile or negative scrolling
+        });
+    </script>
+</body>
+</html>
